@@ -10,12 +10,15 @@
 - Customer Experience
 
 ### 1. **Cataloging**
-### 2. **Seller Growth and Experience**:
+
+### 2. Product Discovery and Product Design
+
+### 3. **Seller Growth and Experience**:
   - **Negotiating for Price with sellers** – Account Manager AI Assistant.
   The E-commerce Negotiation Use-case involves the deployment of an AI negotiator designed to facilitate price negotiations with sellers, akin to an experienced Account Manager. This innovative technology specializes in conducting   
   persuasive and strategic negotiations, aiming to secure favorable price reductions during interactions with sellers.
 
-### 3. **User Growth and Marketing**
+### 4. **User Growth and Marketing**
   - **Generate Push Notifications**: It's promoting new products, notifying about special offers, or delivering tailored updates, this AI-driven approach enhances user engagement, increases click-through rates, and fosters a more   personalized and effective communication channel between businesses and their app users.
   - **Brandify**: Generate Brand Names for your brand along with advertisement based on the product/brand description.
 
