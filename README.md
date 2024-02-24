@@ -10,7 +10,7 @@
 - Customer Experience
 
 ### 1. **Cataloging**
-2. **Seller Growth and Experience**:
+### 2. **Seller Growth and Experience**:
   - **Negotiating for Price with sellers** – Account Manager AI Assistant.
   The E-commerce Negotiation Use-case involves the deployment of an AI negotiator designed to facilitate price negotiations with sellers, akin to an experienced Account Manager. This innovative technology specializes in conducting   
   persuasive and strategic negotiations, aiming to secure favorable price reductions during interactions with sellers.
