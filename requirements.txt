@@ -1,0 +1,7 @@
+streamlit-option-menu==0.3.6
+streamlit==1.22.0
+# hydralit_components==1.0.10
+langchain==0.0.199
+chardet==5.1.0
+pypdf==3.9.1
+openai
