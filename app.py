@@ -24,7 +24,10 @@ from utils.prompt_templates import (
     product_review_summarisation,
     review_moderation_prompt,
     brand_prompt,
-    product_prompt
+    product_prompt,
+    save_files,
+    Web_Loader,
+    File_Loader
 )
 from utils.text_to_image import (
     generate
@@ -39,11 +42,17 @@ openai_model = initialize_model(0.6)
 
 files_path ="C:/Users/Admin/Downloads/GenAI-in-Ecommerce/files"
 
-with st.sidebar:
-    menu_id = option_menu("Main Menu", ["Personalized_recsys","Brandify", 'Customer Request Classification','Product Reviews Summarisation_and_intent_identification','Product Review Moderation','Negotiating Sellers'])
+text_style = "color: #000000; font-size: 30px; background-color: #ffc0cb; padding: 10px; display: inline-block; width: 100%; font-weight: bold;"
+st.sidebar.markdown(f'<p style="{text_style}">NexGenShop</p>', unsafe_allow_html=True)
 
-if menu_id=="Personalized_recsys":
+with st.sidebar:
+    menu_id = option_menu("Main Menu", ["Personalized RecommendationSys","Outfit Generator", "Brandify", 'Customer Request Classification','Product Reviews Summarisation & intent identification','Product Review Moderation','Negotiating Sellers'])
+
+if menu_id=="Personalized RecommendationSys":
     st.title("Personalised Recommendation")
+
+if menu_id=="Outfit Generator":
+    st.title("Outfit Generator")
 
 if menu_id=="Brandify":
     st.title("Your Branding App")
@@ -63,6 +72,7 @@ if menu_id=="Brandify":
         batch_json = {}
         file_uploaded = save_files(path_list)
         if file_uploaded:
+            print("Path List", path_list)
             files_list = os.listdir(path_list)
             print(files_list)
             data_list = File_Loader(files_list)
@@ -107,7 +117,7 @@ if menu_id=="Brandify":
 
     select_option = st.sidebar.selectbox("choose your naming purpose",("Brand_Name","Product_Name"))
     if selected=="text":
-        form, param = st.columns([10,1.5])
+        form, param = st.columns([7,2])
         with st.expander("Text-to-image parameters"):
             with param:
                 negative_prompt = st.text_input("write any negative prompt")
@@ -208,7 +218,7 @@ if menu_id=="Brandify":
                                                     file_name= 'Result.json')
 
 if menu_id=="Customer Request Classification":
-    st.title("Your Branding App")
+    st.title("Customer Request Classification")
     
     options = ['None','text', 'file']
 
@@ -249,8 +259,8 @@ if menu_id=="Customer Request Classification":
                                                 mime="application/json",
                                                 file_name= 'Result.json')
 
-if menu_id=="Product Reviews Summarisation_and_intent_identification":
-    st.title("Your Branding App")
+if menu_id=="Product Reviews Summarisation & intent identification":
+    st.title("Product Reviews Summarisation & intent identification")
     
     options = ['None','text', 'file']
 
@@ -300,7 +310,7 @@ if menu_id=="Product Reviews Summarisation_and_intent_identification":
                                             file_name= 'Result.json')
 
 if menu_id=="Product Review Moderation":
-    st.title("Your Branding App")
+    st.title("Product Review Moderation")
     
     options = ['None','text', 'file']
 
@@ -339,7 +349,7 @@ if menu_id=="Product Review Moderation":
                                             file_name= 'Result.json')
     
 if menu_id=="Negotiating Sellers":
-    st.title("Your Branding App")
+    st.title("Negotiate with seller")
 
     def new_chat():
         """
@@ -392,8 +402,6 @@ if menu_id=="Negotiating Sellers":
         st.session_state["temp"] = ""
 
     K = 10
-
-    st.title("Negotiate with seller")
 
     hide_default_format = """
         <style>
