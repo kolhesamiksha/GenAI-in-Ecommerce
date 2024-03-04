@@ -1,19 +1,19 @@
 from langchain import PromptTemplate
 from langchain.chat_models import ChatOpenAI
 from langchain.llms import OpenAI
-
+import openai
 import os
 import streamlit as st
 from PIL import Image
 from io import BytesIO
 import base64
 
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+OPENAI_API_KEY = "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"
 files_path ="C:/Users/Admin/Downloads/GenAI-in-Ecommerce/files"
 
 def initialize_model(temperature):
     openai_model = OpenAI(
-        model_name="gpt-3.5-turbo-16k",
+        model_name="gpt-3.5-turbo",
         openai_api_key=OPENAI_API_KEY,
         temperature = temperature,
         )
@@ -250,3 +250,47 @@ def negotiate_seller_prompt(history, input):
     )
 
     return prompt
+
+def save_files(files_list):
+    if not os.path.exists(files_path):
+        os.system(f"mkdir {files_path}")
+    for file in files_list:
+        save_path = f"{files_path}/{file.name}"
+        print("Save Path",save_path)
+        with open(save_path, mode='wb') as w:
+            w.write(file.getvalue())
+    return True
+
+def Web_Loader(websites_list):
+    Documents = []
+    Documents.extend(WebBaseLoader(websites_list).load())
+    return Documents
+
+def File_Loader(files_list):
+    Documents = []
+    for file in files_list:
+        file = f"{files_path}/{file}"
+        if file.endswith(".csv"):
+            Documents.extend(CSVLoader(file).load())
+        elif file.endswith(".pdf"):
+            Documents.extend(PyPDFLoader(file).load())
+        elif file.endswith(".txt"):
+            Documents.extend(TextLoader(file).load())
+        elif file.endswith(".html"):
+            Documents.extend(UnstructuredHTMLLoader(file).load())
+        elif file.endswith(".json"):
+            Documents.extend(
+                JSONLoader(
+                    file_path=file,
+                    jq_schema=".[]",
+                    text_content=False,
+                ).load()
+            )
+        elif file.endswith(".pptx"):
+            Documents.extend(UnstructuredPowerPointLoader(file).load())
+        elif file.endswith(".docx"):
+            Documents.extend(UnstructuredWordDocumentLoader(file).load())
+        elif file.endswith(".rtf"):
+            Documents.extend(UnstructuredRTFLoader(file).load())
+        os.remove(file)
+    return Documents
