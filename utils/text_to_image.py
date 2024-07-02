@@ -4,8 +4,14 @@ from PIL import Image
 from io import BytesIO
 import base64
 import requests, json
+from dotenv import dotenv_values
 
-hf_api_key = "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"
+def load_api_key():
+    env_var = dotenv_values(".env")
+    return env_var.get("HF_API_KEY")
+
+os.environ['HF_API_KEY'] = load_api_key()
+hf_api_key = os.environ['HF_API_KEY']
 
 def get_completion(inputs, parameters=None, ENDPOINT_URL='https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5'):
     headers = {

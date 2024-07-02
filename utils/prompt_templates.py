@@ -1,23 +1,24 @@
-from langchain import PromptTemplate
-from langchain.chat_models import ChatOpenAI
-from langchain.llms import OpenAI
+from langchain_groq import ChatGroq
+from langchain_core.prompts import PromptTemplate
 import openai
 import os
 import streamlit as st
 from PIL import Image
 from io import BytesIO
 import base64
+from .logutils import Logger
+from dotenv import dotenv_values
 
-OPENAI_API_KEY = "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"
+def load_api_key():
+    env_var = dotenv_values(".env")
+    return env_var.get("GROQ_API_KEY")
+
+os.environ['GROQ_API_KEY'] = load_api_key()
 files_path ="C:/Users/Admin/Downloads/GenAI-in-Ecommerce/files"
 
 def initialize_model(temperature):
-    openai_model = OpenAI(
-        model_name="gpt-3.5-turbo",
-        openai_api_key=OPENAI_API_KEY,
-        temperature = temperature,
-        )
-    return openai_model
+    llm_model = ChatGroq(temperature=temperature, model_name="mixtral-8x7b-32768")
+    return llm_model
 
 # for APIs input/output
 def review_moderation_prompt(text):
@@ -42,20 +43,6 @@ def review_moderation_prompt(text):
         input_variables=["text"],
         template=example_template
     )
-
-    # suffix = """
-    # User: {query}
-    # AI: """
-
-    # # now create the few shot prompt template
-    # few_shot_prompt_template = FewShotPromptTemplate(
-    #     examples=examples,
-    #     example_prompt=example_prompt,
-    #     prefix=prefix,
-    #     suffix=suffix,
-    #     input_variables=["query"],
-    #     example_separator="\n\n"
-    # )
     return example_prompt
 
 def request_classifier_prompt(text):                            
