@@ -1,0 +1,5 @@
+google-generativeai
+langchain==0.0.336
+openai
+tiktoken
+pymilvus
