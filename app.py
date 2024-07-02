@@ -5,16 +5,7 @@ from streamlit_option_menu import option_menu
 import pickle
 import os
 
-# import langchain requirements
-from langchain import FewShotPromptTemplate
-from langchain import PromptTemplate
-from langchain.chat_models import ChatOpenAI
-from langchain.chains import ConversationChain
-from langchain.llms import OpenAI
-#from langchain.chains.conversation.memory import ConversationEntityMemory
 from langchain.memory import ConversationBufferWindowMemory
-from langchain.chains.conversation.prompt import ENTITY_MEMORY_CONVERSATION_TEMPLATE
-
 
 # #import app modules
 from utils.prompt_templates import (
@@ -34,7 +25,7 @@ from utils.text_to_image import (
 )
 
 st.set_page_config(
-    page_title='Content_Moderation',  
+    page_title='Ecommerce-apps',  
     initial_sidebar_state = 'auto'
 )
 
@@ -46,13 +37,13 @@ text_style = "color: #000000; font-size: 30px; background-color: #ffc0cb; paddin
 st.sidebar.markdown(f'<p style="{text_style}">NexGenShop</p>', unsafe_allow_html=True)
 
 with st.sidebar:
-    menu_id = option_menu("Main Menu", ["Personalized RecommendationSys","Outfit Generator", "Brandify", 'Customer Request Classification','Product Reviews Summarisation & intent identification','Product Review Moderation','Negotiating Sellers'])
+    menu_id = option_menu("Main Menu", ["About", "Brandify", 'Customer Request Classification','Product Reviews Summarisation & intent identification','Product Review Moderation','Negotiating Sellers','Push Notification'])
+
+if menu_id=="About":
+    print("sfd")
 
 if menu_id=="Personalized RecommendationSys":
     st.title("Personalised Recommendation")
-
-if menu_id=="Outfit Generator":
-    st.title("Outfit Generator")
 
 if menu_id=="Brandify":
     st.title("Your Branding App")
@@ -62,9 +53,10 @@ if menu_id=="Brandify":
 
     def text_input(prompt_template,input_text):
         prompt_template = prompt_template(input_text)
-        prompt_output = prompt_template.format(text=input_text)
-        brand_name = openai_model(prompt_output)
-        return brand_name
+        # prompt_output = prompt_template.format(text=input_text)
+        chain = prompt_template | openai_model
+        output = chain.invoke({'text': input_text})
+        return output.content
 
     #for File as input
     def file_uploader(path_list,input_prompt):
@@ -141,21 +133,11 @@ if menu_id=="Brandify":
                         col1,col2 = st.columns(2)
                         with col1: 
                             brand_desc = st.text_area("Suggested Brand Names",value = text_input(brand_prompt,input_text),height=400)
-                            print(f"dtype of brand description : {type(brand_desc)}, brand_desc: {brand_desc[0]}")
+                            # print(f"dtype of brand description : {type(brand_desc)}, brand_desc: {brand_desc[0]}")
                         with col2:
                             output = generate(brand_desc,negative_prompt,num_inference_steps,guidance,img_width,img_height)
                             output = output.resize((600,600))
                             st.image(output)          
-
-                            # image = Image.open(output)
-
-                            # # Convert the image to binary data
-                            # buffer = io.BytesIO()
-                            # image.save(buffer, format="JPEG")
-                            # image_binary = buffer.getvalue()
-
-                            # # Create a download button with the binary data
-                            # st.download_button(label="Download Image", data=image_binary, file_name="image.jpg")
                 else:
                     st.warning("Please enter a company description.")
                     
@@ -168,13 +150,6 @@ if menu_id=="Brandify":
                         st.text_area("Suggested Product Names",value = text_input(product_prompt,input_text),height=400)
                 else:
                     st.warning("Please enter a product description.")
-        
-            # if input_option == "Link":
-            #     web_link = st.text_input("Enter the web link")
-            #     if st.button("Generate Product Advert"):
-            #         with st.spinner("Processing... This may take a while⏳"):
-            #             input_prompt = product_prompt()
-            #             st.text_area("Suggested Product Names",value = link_input(product_prompt,web_link),height=400)
 
     if selected=="file":
         if select_option=="Brand_Name":
@@ -236,9 +211,9 @@ if menu_id=="Customer Request Classification":
                 with st.spinner("This may take a moment..."):
                     prompt_template = request_classifier_prompt(user_input)
                     prompt_text = prompt_template.template.format(text=user_input)
-                    model_reply = openai_model(prompt_text)
-                    print("Model Reply:", model_reply)
-                    st.text_area("Classified Request",value=model_reply,height=400)                       # Print the model's reply for debugging purposes
+                    chain = prompt_text | openai_model
+                    print("Model Reply:", chain)
+                    st.text_area("Classified Request",value=chain,height=400)                       # Print the model's reply for debugging purposes
 
     if selected == "file":
         st.subheader("Customer Request Classification")
@@ -277,18 +252,18 @@ if menu_id=="Product Reviews Summarisation & intent identification":
                 with st.spinner("This may take a moment..."):
                     prompt_template = product_review_summarisation(user_input)
                     prompt_text = prompt_template.template.format(text=user_input)
-                    model_reply = openai_model(prompt_text)
-                    print("Model Reply:", model_reply)
-                    st.text_area("Summarise Reviews",value=model_reply,height=400)                       # Print the model's reply for debugging purposes
+                    chain= prompt_text | openai_model
+                    print("Model Reply:", chain)
+                    st.text_area("Summarise Reviews",value=chain,height=400)                       # Print the model's reply for debugging purposes
         
         with col2:
             if st.button("Analyse Sentiment"):
                 with st.spinner("This may take a moment..."):
                     prompt_template = review_sentiment_prompt(user_input)
                     prompt_text = prompt_template.template.format(text=user_input)
-                    model_reply = openai_model(prompt_text)
-                    print("Model Reply:", model_reply)
-                    st.text_area("Classified Sentiment",value=model_reply,height=400) 
+                    chain = prompt_text | openai_model
+                    print("Model Reply:", chain)
+                    st.text_area("Classified Sentiment",value=chain,height=400) 
 
     if selected == "file":
         st.subheader("Product Reviews Sentiment analysis")
@@ -325,9 +300,9 @@ if menu_id=="Product Review Moderation":
             with st.spinner("This may take a moment..."):
                 prompt_template = review_moderation_prompt(user_input)
                 prompt_text = prompt_template.template.format(text=user_input)
-                model_reply = openai_model(prompt_text)
-                print("Model Reply:", model_reply)
-                st.text_area("Review_Moderation",value=model_reply,height=400)                       # Print the model's reply for debugging purposes
+                chain = prompt_text | openai_model
+                print("Model Reply:", chain)
+                st.text_area("Review_Moderation",value=chain,height=400)                       # Print the model's reply for debugging purposes
 
     if selected == "file":
         st.subheader("Moderation for Content Safety")
@@ -421,6 +396,7 @@ if menu_id=="Negotiating Sellers":
     prompts_template = negotiate_seller_prompt(history=st.session_state.past, input=st.session_state.input)
 
     # Create the ConversationChain object with the specified configuration
+
     Conversation = ConversationChain(
             llm=llm, 
             prompt=prompts_template,
@@ -457,3 +433,30 @@ if menu_id=="Negotiating Sellers":
     if st.session_state.stored_session:   
         if st.sidebar.checkbox("Clear-all"):
             del st.session_state.stored_session
+
+if menu_id=="Push Notification":
+    form, param = st.columns([4,1.5])
+    with st.expander("Text-to-image parameters"):
+        with param:
+            negative_prompt = st.text_input("write any negative prompt")
+            num_inference_steps = st.slider(label="Inference Steps", min_value=1, max_value=100, value=25,
+                                help="In how many steps will the denoiser denoise the image?")
+
+            guidance =  st.slider(label="Guidance Scale", min_value=1, max_value=20, value=7, 
+                                help="Controls how much the text prompt influences the result")
+            img_width = st.slider(label="Image Width", min_value=64, max_value=768, step=64, value=512)
+            img_height = st.slider(label="Image Height", min_value=64, max_value=768, step=64, value=512)
+    
+        with form:
+                st.subheader("Push Notification Generator")
+                input_text = st.text_area("Enter the product desription",height=50)
+                if st.button("generate push notification"):
+                    with st.spinner("Processing... This may take a while⏳"):
+                        output = generate(input_text,negative_prompt,num_inference_steps,guidance,img_width,img_height)
+                        st.image(output)
+                        prompt_template = handle_prompt(input_text)
+                        chain = prompt_template | openai_model
+                        st.text_area("Convincing Text",value = chain.content ,height=400)
+                        
+                else:
+                    st.warning("Please enter a product name")   
