@@ -2,11 +2,6 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import Milvus
 import openai
 
-HOST = "prod-milvus-milvus.vector-db.svc.cluster.local"
-PORT = "19530"
-MILVUS_USERNAME = "username"
-MILVUS_PASSWORD = "password"
-COLLECTION_NAME = "samiksha_Retail_RecSys_1k_data_demo_collection"
 OPENAI_API_KEY = ""
 
 def product_vector_search(query):
@@ -20,12 +15,7 @@ def product_vector_search(query):
 
     embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 
-    vector_store = Milvus(
-        embeddings,
-        connection_args={"host": HOST, "port": PORT, 'user': MILVUS_USERNAME, 'password': MILVUS_PASSWORD},
-        collection_name = COLLECTION_NAME,
-        search_params = {"metric":"L2","index_type":"FLAT","offset":0},
-        )
+    #TODO: add Qdrant Search Code
 
     recommendations = vector_store.similarity_search_with_score(query,k=8)
 
@@ -50,12 +40,7 @@ def personal_vector_search(prev_category, user):
 
     embeddings = OpenAIEmbeddings(openai_api_key="")
 
-    vector_store = Milvus(
-        embeddings,
-        connection_args={"host": HOST, "port": PORT, 'user': MILVUS_USERNAME, 'password': MILVUS_PASSWORD},
-        collection_name = COLLECTION_NAME,
-        search_params = {"metric":"L2","index_type":"FLAT","offset":0},
-        )
+    #TODO: add Qdrant Search Code
 
     query = f"Suggest me some products from categories like {prev_category}"
     recommendations = vector_store.similarity_search_with_score(query,k=12,expr=f'user_name=="{user}"')
